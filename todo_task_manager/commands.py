@@ -34,25 +34,21 @@ class ListCommand(BaseCommand):
             return
 
         for index, obj in enumerate(objects):
-            print('{}: {} {}'.format(index, str(obj), '+' if obj.done == True else '-'))
+            print('{} {}: {}'.format( '+' if obj.done else '-', index, str(obj)))
 
 class DoneCommand(BaseCommand):
+    state = True
     @staticmethod
     def label():
         return 'done'
 
     def perform(self, objects, *args, **kwargs):
-        if len(objects) == 0:
-            print('There are no items in storage.')
-            return
-
-        for index, obj in enumerate(objects):
-            print('{}: {} {}'.format(index, str(obj), '+' if obj.done == True else '-'))
+        ListCommand.perform(self, objects)
 
         while True:
             try:
                 selected = int(input('Select item to mark as done: '))
-                objects[selected].done = True
+                objects[selected].done = self.state
 
                 break
             except ValueError:
@@ -61,45 +57,11 @@ class DoneCommand(BaseCommand):
                 print('Wrong index, try again.')
         return
 
-class UndoneCommand(BaseCommand):
+class UndoneCommand(DoneCommand):
+    state = False
     @staticmethod
     def label():
         return 'undone'
-
-    def perform(self, objects, *args, **kwargs):
-        if len(objects) == 0:
-            print('There are no items in storage.')
-            return
-
-        for index, obj in enumerate(objects):
-            print('{}: {} {}'.format(index, str(obj), '+' if obj.done == True else '-'))
-
-        while True:
-            try:
-                selected = int(input('Select item to mark as undone: '))
-                objects[selected].done = False
-
-                break
-            except ValueError:
-                print('Bad input, try again.')
-            except IndexError:
-                print('Wrong index, try again.')
-        return
-
-
-    '''def perfotm(self, objects, *args, **kwargs):
-        pass
-        if len(objects) == 0:
-    
-            print('There are no items in storage.')
-            return
-
-        for index, obj in enumerate(objects):
-            print('{}: {}'.format(index, str(obj)))
-
-        selected = input('Select what is done: ')
-        objects[selected].done = True
-        pass'''
 
 class NewCommand(BaseCommand):
     @staticmethod
